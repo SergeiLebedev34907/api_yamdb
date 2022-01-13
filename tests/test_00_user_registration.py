@@ -188,17 +188,6 @@ class Test00UserRegistration:
             f'возвращается статус {code}'
         )
 
-        invalid_data = {
-            'username': 'unexisting_user',
-            'confirmation_code': 12345
-        }
-        response = client.post(self.url_token, data=invalid_data)
-        code = 404
-        assert response.status_code == code, (
-            f'Проверьте, что при POST запросе `{self.url_token}` с несуществующим username, '
-            f'возвращается статус {code}'
-        )
-
         valid_email = 'valid@yamdb.fake'
         valid_username = 'valid_username'
 
@@ -222,6 +211,17 @@ class Test00UserRegistration:
         assert response.status_code == code, (
             f'Проверьте, что при POST запросе `{self.url_token}` с валидным username, '
             f'но невалидным confirmation_code, возвращается статус {code}'
+        )
+
+        invalid_data = {
+            'username': 'unexisting_user',
+            'confirmation_code': 12345
+        }
+        response = client.post(self.url_token, data=invalid_data)
+        code = 404
+        assert response.status_code == code, (
+            f'Проверьте, что при POST запросе `{self.url_token}` с несуществующим username, '
+            f'возвращается статус {code}'
         )
 
     @pytest.mark.django_db(transaction=True)

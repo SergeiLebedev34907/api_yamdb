@@ -2,20 +2,19 @@ from django.urls import path
 
 from . import views
 
-app_name = 'api'
+app_name = "api"
 
 urlpatterns = [
-    
+    path("v1/auth/signup/", views.SignupAPIView.as_view(), name="signup"),
+    path(
+        "v1/auth/token/",
+        views.CustomTokenObtainPairView.as_view(),
+        name="token_obtain_pair",
+    ),
+    path("v1/users/", views.UsersList.as_view()),
+    path(
+        "v1/users/me/",
+        views.MeViewSet.as_view({"get": "retrieve", "patch": "update"}),
+    ),
+    path("v1/users/<str:username>/", views.UsersDetail.as_view()),
 ]
-
-#    Ресурс auth: аутентификация.
-#    Ресурс users: пользователи.
-#    Ресурс titles: произведения, к которым пишут отзывы (определённый фильм, 
-# книга или песенка).
-#    Ресурс categories: категории (типы) произведений («Фильмы», «Книги», «Музыка»).
-#    Ресурс genres: жанры произведений. Одно произведение может быть привязано к 
-# нескольким жанрам.
-#    Ресурс reviews: отзывы на произведения. Отзыв привязан к определённому 
-# произведению.
-#    Ресурс comments: комментарии к отзывам. Комментарий привязан к определённому 
-# отзыву.
