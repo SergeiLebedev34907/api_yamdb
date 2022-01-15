@@ -3,8 +3,11 @@ from django.contrib.auth.models import update_last_login
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
+from rest_framework.validators import UniqueTogetherValidator
 from rest_framework_simplejwt.serializers import PasswordField, RefreshToken
 from rest_framework_simplejwt.settings import api_settings
+
+from reviews.models import Comment, Review
 
 from .validators import NotMeValidator, NoUserValidator
 
@@ -94,3 +97,41 @@ class CustomTokenObtainPairSerializer(serializers.Serializer):
 
     class Meta:
         validators = (NoUserValidator(),)
+
+
+# 3 часть
+class ReviewSerializer(serializers.ModelSerializer):
+    author = serializers.SlugRelatedField(
+        read_only=True, slug_field="username"
+    )
+    score = serializers.IntegerField(max_value=10, min_value=1)
+
+    class Meta:
+        fields = ("id", "score", "title", "author", "pub_date")
+        model = Review
+
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Review.objects.all(), fields=("author", "title")
+            )
+        ]
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    author = serializers.SlugRelatedField(
+        read_only=True, slug_field="username"
+    )
+
+    class Meta:
+        fields = ("id", "text", "author", "pub_date")
+        model = Comment
+
+
+class TitleSerializer(serializers.ModelSerializer):
+    rating = serializers.IntegerField(
+        source="review__score__avg", read_only=True
+    )
+
+    class Meta:
+        fields = ("id", "title", "category", "rating")
+        model = Comment

@@ -1,10 +1,27 @@
-from django.urls import path
+from django.urls import include, path
+from rest_framework import routers
 
 from . import views
 
 app_name = "api"
 
+router = routers.DefaultRouter()
+
+router.register(
+    r"titles/(?P<title_id>\d+)/reviews",
+    views.ReviewViewSet,
+    basename="reviews",
+)
+router.register(
+    r"titles/(?P<title_id>\d+)/reviews/(?P<review_id>\d+)/comments/",
+    views.CommentViewSet,
+    basename="comments",
+)
+
 urlpatterns = [
+    # 3 часть
+    path("v1/", include(router.urls)),
+    # 1 часть
     path("v1/auth/signup/", views.SignupAPIView.as_view(), name="signup"),
     path(
         "v1/auth/token/",
