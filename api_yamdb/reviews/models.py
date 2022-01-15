@@ -37,7 +37,8 @@ class Genre(models.Model):
 
 
 class Title(models.Model):
-    title = models.CharField(max_length=200, verbose_name='Название произведения')
+    title = models.CharField(max_length=200,
+                             verbose_name='Название произведения')
     category = models.ForeignKey(
         Category,
         blank=True, null=True,
@@ -68,35 +69,26 @@ class TitleGenre(models.Model):
 
 
 class Review(models.Model):
-    MARK_CHOICES = [
-        ('1', '1'),
-        ('2', '2'),
-        ('3', '3'),
-        ('4', '4'),
-        ('5', '5'),
-        ('6', '6'),
-        ('7', '7'),
-        ('8', '8'),
-        ('9', '9'),
-        ('10', '10'),
-    ]
-    mark = models.CharField(
-        max_length=2,
-        choices=MARK_CHOICES,
-        blank=True, null=True,
-    )
+    score = models.IntegerField()
     title = models.ForeignKey(
         Title,
         related_name='reviews',
         on_delete=models.CASCADE,
     )
-    user = models.ForeignKey(
+    author = models.ForeignKey(
         User,
         related_name='reviews',
         on_delete=models.CASCADE,
     )
+    pub_date = models.DateTimeField('Дата добавления', auto_now_add=True)
 
     class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['author', 'title'],
+                name='unique_author_title'
+            )
+        ]
         verbose_name = 'Отзыв'
         verbose_name_plural = 'Отзывы'
 
@@ -116,7 +108,7 @@ class Comment(models.Model):
         related_name='comments',
         verbose_name='Автор'
     )
-    created = models.DateTimeField(
+    pub_date = models.DateTimeField(
         auto_now_add=True,
         verbose_name='Дата комментария'
     )
@@ -126,7 +118,7 @@ class Comment(models.Model):
     )
 
     class Meta:
-        ordering = ['-created']
+        ordering = ['-pub_date']
         verbose_name = 'Комментарий'
         verbose_name_plural = 'Комментарии'
 
