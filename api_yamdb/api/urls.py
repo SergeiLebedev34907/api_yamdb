@@ -7,6 +7,11 @@ app_name = "api"
 
 router = routers.DefaultRouter()
 
+# Вторая часть
+router.register("titles", views.TitlesViewSet, basename='title')
+router.register("genres", views.GenreViewSet, basename='genre')
+router.register("categories", views.CategoryViewSet, basename='category')
+# Конец второй части
 router.register(
     r"titles/(?P<title_id>\d+)/reviews",
     views.ReviewViewSet,
@@ -17,11 +22,6 @@ router.register(
     views.CommentViewSet,
     basename="comments",
 )
-# Вторая часть
-router.register("titles", views.TitlesViewSet, basename='title')
-router.register("genres", views.GenreViewSet, basename='genre')
-router.register("categories", views.CategoryViewSet, basename='category')
-# Конец второй части
 
 urlpatterns = [
     # 3 часть
