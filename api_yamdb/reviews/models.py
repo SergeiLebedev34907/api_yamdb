@@ -20,6 +20,7 @@ class User(AbstractUser):
         ordering = ["date_joined"]
 
 
+# Вторая часть
 class Category(models.Model):
     name = models.CharField(max_length=200, verbose_name="Название категории")
     slug = models.SlugField(unique=True, verbose_name="Краткое название")
@@ -27,6 +28,7 @@ class Category(models.Model):
     class Meta:
         verbose_name = "Категория"
         verbose_name_plural = "Категории"
+        ordering = ['-id']
 
     def __str__(self):
         return self.name
@@ -39,14 +41,25 @@ class Genre(models.Model):
     class Meta:
         verbose_name = "Жанр"
         verbose_name_plural = "Жанры"
+        ordering = ['-id']
 
     def __str__(self):
         return self.name
 
 
 class Title(models.Model):
-    title = models.CharField(
+    name = models.CharField(
         max_length=200, verbose_name="Название произведения"
+    )
+    year = models.IntegerField(
+        null=True,
+        verbose_name="Год издания",
+        db_index=True
+    )
+    genre = models.ManyToManyField(
+        Genre,
+        blank=True,
+        related_name="titles"
     )
     category = models.ForeignKey(
         Category,
@@ -55,29 +68,30 @@ class Title(models.Model):
         related_name="titles",
         on_delete=models.SET_NULL,
     )
+    description = models.CharField(max_length=200, null=True)
 
     class Meta:
         verbose_name = "Произведене"
         verbose_name_plural = "Произведения"
 
     def __str__(self):
-        return self.title
+        return self.name
 
 
-class TitleGenre(models.Model):
-    title = models.ForeignKey(
-        Title,
-        related_name="tg_title",
-        on_delete=models.CASCADE,
-    )
-    genre = models.ForeignKey(
-        Genre,
-        blank=True,
-        null=True,
-        related_name="th_genre",
-        on_delete=models.CASCADE,
-    )
-
+# class TitleGenre(models.Model):
+#     title = models.ForeignKey(
+#         Title,
+#         related_name="tg_title",
+#         on_delete=models.CASCADE,
+#     )
+#     genre = models.ForeignKey(
+#         Genre,
+#         blank=True,
+#         null=True,
+#         related_name="th_genre",
+#         on_delete=models.CASCADE,
+#     )
+# Конец второй части
 
 class Review(models.Model):
     """MARK_CHOICES = [

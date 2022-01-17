@@ -1,25 +1,32 @@
 import random
 
+from django.db.models import Avg
 from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
+from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
-from rest_framework import generics, status, viewsets
+from rest_framework import filters, generics, status, viewsets
 from rest_framework.generics import CreateAPIView
-from rest_framework.mixins import ListModelMixin
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.mixins import (CreateModelMixin, DestroyModelMixin,
+                                   ListModelMixin)
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenViewBase
 
-from reviews.models import Comment, Review, Title
-
+from api.filters import TitleFilter
+from reviews.models import Category, Comment, Genre, Review, Title
 from .pagination import PageNumberPagination5
-from .permissions import IsAdmin, IsAuthorModeratorAdminOrReadOnly
+from .permissions import IsAdmin, IsAdminOrReadOnly, IsAuthorModeratorAdminOrReadOnly
 from .serializers import (
     AdminUserManagementSerializer,
+    CategorySerializer,
     ChangingUserDataSerializer,
     CommentSerializer,
     CustomTokenObtainPairSerializer,
     DestroyUserSerializer,
+    GenreSerializer,
+    TitleCreateSerializer,
+    TitleListSerializer,
     ReviewSerializer,
     UserSignUpSerializer,
 )
@@ -162,3 +169,46 @@ class CommentViewSet(viewsets.ModelViewSet):
             user=self.request.user,
             review=get_object_or_404(Review, id=self.kwargs.get("review_id")),
         )
+
+
+# Вторая часть
+class CreateListDestroyViewSet(ListModelMixin,
+                               CreateModelMixin,
+                               DestroyModelMixin,
+                               viewsets.GenericViewSet):
+
+    pass
+
+
+class TitlesViewSet(viewsets.ModelViewSet):
+    queryset = Title.objects.annotate(rating=Avg('reviews__score')).order_by('id')
+    pagination_class = PageNumberPagination5
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filterset_class = TitleFilter
+    permission_classes = [IsAuthenticatedOrReadOnly, IsAdminOrReadOnly]
+
+    def get_serializer_class(self):
+        if self.action in ('create', 'update', 'partial_update'):
+            return TitleCreateSerializer
+        return TitleListSerializer
+
+
+class CategoryViewSet(CreateListDestroyViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    pagination_class = PageNumberPagination5
+    permission_classes = [IsAdminOrReadOnly]
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['name']
+    lookup_field = 'slug'
+
+
+class GenreViewSet(CreateListDestroyViewSet):
+    queryset = Genre.objects.all()
+    serializer_class = GenreSerializer
+    pagination_class = PageNumberPagination5
+    permission_classes = [IsAdminOrReadOnly]
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['name']
+    lookup_field = 'slug'
+# Конец второй части

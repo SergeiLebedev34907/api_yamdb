@@ -7,7 +7,7 @@ from rest_framework.validators import UniqueTogetherValidator
 from rest_framework_simplejwt.serializers import PasswordField, RefreshToken
 from rest_framework_simplejwt.settings import api_settings
 
-from reviews.models import Comment, Review
+from reviews.models import Category, Comment, Genre, Title, Review
 
 from .validators import NotMeValidator, NoUserValidator
 
@@ -127,11 +127,46 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comment
 
 
-class TitleSerializer(serializers.ModelSerializer):
-    rating = serializers.IntegerField(
-        source="review__score__avg", read_only=True
+# Вторая часть
+class CategorySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        fields = ('name', 'slug')
+        model = Category
+        lookup_field = 'slug'
+
+
+class GenreSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        fields = ('name', 'slug')
+        model = Genre
+        lookup_field = 'slug'
+
+
+class TitleListSerializer(serializers.ModelSerializer):
+    genre = GenreSerializer(many=True, read_only=True)
+    category = CategorySerializer(read_only=True)
+    rating = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        fields = ("id", "name", "year", "genre", "category", "description", "rating")
+        model = Title
+
+
+class TitleCreateSerializer(serializers.ModelSerializer):
+
+    category = serializers.SlugRelatedField(
+        slug_field='slug',
+        queryset=Category.objects.all()
+    )
+    genre = serializers.SlugRelatedField(
+        many=True,
+        slug_field='slug',
+        queryset=Genre.objects.all()
     )
 
     class Meta:
-        fields = ("id", "title", "category", "rating")
-        model = Comment
+        fields = ('__all__')
+        model = Title
+# Конец второй части
