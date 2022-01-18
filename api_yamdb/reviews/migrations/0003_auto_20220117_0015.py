@@ -6,16 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('reviews', '0002_auto_20220116_2342'),
+        ("reviews", "0002_auto_20220116_2342"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='title',
-            name='genre',
-            field=models.ManyToManyField(blank=True, related_name='titles', to='reviews.Genre'),
+            model_name="title",
+            name="genre",
+            field=models.ManyToManyField(
+                blank=True, related_name="titles", to="reviews.Genre"
+            ),
         ),
         migrations.DeleteModel(
-            name='TitleGenre',
+            name="TitleGenre",
         ),
     ]

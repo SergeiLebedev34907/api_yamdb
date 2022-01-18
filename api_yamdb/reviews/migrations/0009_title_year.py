@@ -6,13 +6,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('reviews', '0008_auto_20220117_0117'),
+        ("reviews", "0008_auto_20220117_0117"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='title',
-            name='year',
-            field=models.IntegerField(db_index=True, null=True, verbose_name='Год издания'),
+            model_name="title",
+            name="year",
+            field=models.IntegerField(
+                db_index=True, null=True, verbose_name="Год издания"
+            ),
         ),
     ]

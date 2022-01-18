@@ -28,7 +28,7 @@ class Category(models.Model):
     class Meta:
         verbose_name = "Категория"
         verbose_name_plural = "Категории"
-        ordering = ['-id']
+        ordering = ["-id"]
 
     def __str__(self):
         return self.name
@@ -41,7 +41,7 @@ class Genre(models.Model):
     class Meta:
         verbose_name = "Жанр"
         verbose_name_plural = "Жанры"
-        ordering = ['-id']
+        ordering = ["-id"]
 
     def __str__(self):
         return self.name
@@ -52,15 +52,9 @@ class Title(models.Model):
         max_length=200, verbose_name="Название произведения"
     )
     year = models.IntegerField(
-        null=True,
-        verbose_name="Год издания",
-        db_index=True
+        null=True, verbose_name="Год издания", db_index=True
     )
-    genre = models.ManyToManyField(
-        Genre,
-        blank=True,
-        related_name="titles"
-    )
+    genre = models.ManyToManyField(Genre, blank=True, related_name="titles")
     category = models.ForeignKey(
         Category,
         blank=True,
@@ -78,42 +72,10 @@ class Title(models.Model):
         return self.name
 
 
-# class TitleGenre(models.Model):
-#     title = models.ForeignKey(
-#         Title,
-#         related_name="tg_title",
-#         on_delete=models.CASCADE,
-#     )
-#     genre = models.ForeignKey(
-#         Genre,
-#         blank=True,
-#         null=True,
-#         related_name="th_genre",
-#         on_delete=models.CASCADE,
-#     )
-# Конец второй части
-
+# Третья часть
 class Review(models.Model):
-    """MARK_CHOICES = [
-        ("1", "1"),
-        ("2", "2"),
-        ("3", "3"),
-        ("4", "4"),
-        ("5", "5"),
-        ("6", "6"),
-        ("7", "7"),
-        ("8", "8"),
-        ("9", "9"),
-        ("10", "10"),
-    ]
-    mark = models.CharField(
-        max_length=2,
-        choices=MARK_CHOICES,
-        blank=True,
-        null=True,
-    )"""
-
-    score = models.IntegerField()
+    text = models.TextField()
+    score = models.IntegerField(null=True, blank=True)
     title = models.ForeignKey(
         Title,
         related_name="reviews",
@@ -127,16 +89,17 @@ class Review(models.Model):
     pub_date = models.DateTimeField("Дата добавления", auto_now_add=True)
 
     class Meta:
+        verbose_name = "Отзыв"
+        verbose_name_plural = "Отзывы"
         constraints = [
             models.UniqueConstraint(
                 fields=["author", "title"], name="unique_author_title"
             )
         ]
-        verbose_name = "Отзыв"
-        verbose_name_plural = "Отзывы"
+        ordering = ["pub_date"]
 
     def __str__(self):
-        return f"{self.title} {self.user} {self.mark}"
+        return f"{self.title} {self.author} {self.score}"
 
 
 class Comment(models.Model):
@@ -151,8 +114,6 @@ class Comment(models.Model):
         related_name="comments",
         verbose_name="Автор",
     )
-    '''created = models.DateTimeField(
-        auto_now_add=True, verbose_name="Дата комментария"'''
     pub_date = models.DateTimeField(
         auto_now_add=True, verbose_name="Дата комментария"
     )
@@ -162,7 +123,6 @@ class Comment(models.Model):
     )
 
     class Meta:
-        # ordering = ["-created"]
         ordering = ["-pub_date"]
         verbose_name = "Комментарий"
         verbose_name_plural = "Комментарии"
