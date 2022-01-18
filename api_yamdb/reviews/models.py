@@ -113,7 +113,8 @@ class Review(models.Model):
         null=True,
     )"""
 
-    score = models.IntegerField()
+    text = models.TextField()
+    score = models.IntegerField(null=True, blank=True)
     title = models.ForeignKey(
         Title,
         related_name="reviews",
@@ -127,16 +128,17 @@ class Review(models.Model):
     pub_date = models.DateTimeField("Дата добавления", auto_now_add=True)
 
     class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=["author", "title"], name="unique_author_title"
-            )
-        ]
         verbose_name = "Отзыв"
         verbose_name_plural = "Отзывы"
+        constraints = [
+            models.UniqueConstraint(
+                fields=['author', 'title'],
+                name='unique_author_title'
+            )
+        ]
 
     def __str__(self):
-        return f"{self.title} {self.user} {self.mark}"
+        return f"{self.title} {self.author} {self.score}"
 
 
 class Comment(models.Model):

@@ -1,13 +1,15 @@
+from dataclasses import dataclass
+
 from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.models import update_last_login
+from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.validators import UniqueTogetherValidator
 from rest_framework_simplejwt.serializers import PasswordField, RefreshToken
 from rest_framework_simplejwt.settings import api_settings
-
-from reviews.models import Category, Comment, Genre, Title, Review
+from reviews.models import Category, Comment, Genre, Review, Title
 
 from .validators import NotMeValidator, NoUserValidator
 
@@ -102,19 +104,32 @@ class CustomTokenObtainPairSerializer(serializers.Serializer):
 # 3 часть
 class ReviewSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
-        read_only=True, slug_field="username"
+        read_only=True, slug_field='username',
+        default=serializers.CurrentUserDefault()
     )
     score = serializers.IntegerField(max_value=10, min_value=1)
+    title = serializers.StringRelatedField(read_only=True)
+    # serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
-        fields = ("id", "score", "title", "author", "pub_date")
+        fields = ("id", "text", "score", "title", "author", "pub_date")
         model = Review
 
-        validators = [
-            UniqueTogetherValidator(
-                queryset=Review.objects.all(), fields=("author", "title")
-            )
-        ]
+        # validators = [
+        #     UniqueTogetherValidator(
+        #         queryset=Review.objects.all(), fields=("author", "title")
+        #     )
+        # ]
+
+    def validate(self, data):
+        title = get_object_or_404(
+            Title,
+            id=self.context['request'].parser_context['kwargs']['title_id']
+        )
+        author = self.context['request'].user
+        if self.context['request'].method == 'POST' and Review.objects.filter(author=author, title=title).exists():
+            raise serializers.ValidationError('Error')
+        return data
 
 
 class CommentSerializer(serializers.ModelSerializer):
