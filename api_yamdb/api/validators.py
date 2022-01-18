@@ -20,7 +20,7 @@ class NotMeValidator:
     def __call__(self, attrs, serializer):
         try:
             username = serializer.initial_data["username"]
-        except:
+        except Exception:
             username = None
 
         if username == "me":

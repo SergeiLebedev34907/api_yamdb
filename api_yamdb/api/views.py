@@ -71,7 +71,7 @@ class SignupAPIView(CreateAPIView):
             instance = User.objects.get(
                 username=request.data["username"], email=request.data["email"]
             )
-        except:
+        except Exception:
             instance = None
         serializer = self.get_serializer(instance, data=request.data)
         serializer.is_valid(raise_exception=True)
