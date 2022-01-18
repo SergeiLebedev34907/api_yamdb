@@ -3,9 +3,10 @@ import random
 from django.db.models import Avg
 from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
-from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
-from rest_framework import filters, generics, status, viewsets
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import status, viewsets, filters
+from rest_framework.decorators import action
 from rest_framework.generics import CreateAPIView
 from rest_framework.mixins import (CreateModelMixin, DestroyModelMixin,
                                    ListModelMixin)
@@ -23,7 +24,6 @@ from .serializers import (
     ChangingUserDataSerializer,
     CommentSerializer,
     CustomTokenObtainPairSerializer,
-    DestroyUserSerializer,
     GenreSerializer,
     TitleCreateSerializer,
     TitleListSerializer,
@@ -62,70 +62,48 @@ class SignupAPIView(CreateAPIView):
         except:
             instance = None
         serializer = self.get_serializer(instance, data=request.data)
-        if serializer.is_valid():
-            user = serializer.save()
-            password = create_password()
-            user.set_password(password)
-            user.save()
-            send_mail(
-                "Your confirmation code",
-                f"{password}",
-                "from@example.com",
-                (user.email,),
-                fail_silently=False,
-            )
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        password = create_password()
+        user.set_password(password)
+        user.save()
+        send_mail(
+            "Your confirmation code",
+            f"{password}",
+            "from@example.com",
+            (user.email,),
+            fail_silently=False,
+        )
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class UsersList(ListModelMixin, CreateAPIView):
+class UsersViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = AdminUserManagementSerializer
     permission_classes = (IsAdmin,)
+    filter_backends = (filters.SearchFilter,)
     pagination_class = PageNumberPagination5
+    lookup_field = "username"
     search_fields = ("username",)
 
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
+    def get_instance(self):
+        return self.request.user
 
-    def final_create(self, password, user, serializer):
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    def get_ch_us_d_serializer(self):
+        return ChangingUserDataSerializer
 
-
-class UsersDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = User.objects.all()
-    permission_classes = (IsAdmin,)
-    lookup_field = "username"
-
-    def get_serializer_class(self):
-        if self.request.method == "DELETE":
-            return DestroyUserSerializer
-        return AdminUserManagementSerializer
-
-
-class MeViewSet(viewsets.ViewSet):
-    queryset = User.objects.all()
-    permission_classes = (IsAuthenticated,)
-
-    def get_serializer_class(self):
-        if self.request.method == "PATCH":
-            return ChangingUserDataSerializer
-        return AdminUserManagementSerializer
-
-    def retrieve(self, request):
-        queryset = User.objects.all()
-        me = get_object_or_404(queryset, pk=self.request.user.id)
-        serializer = self.get_serializer_class()
-        serializer = serializer(me)
-        return Response(serializer.data)
-
-    def update(self, request, *args, **kwargs):
-        me = get_object_or_404(User, pk=self.request.user.id)
-        serializer = self.get_serializer_class()
-        serializer = serializer(me, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
+    @action(
+        methods=("get", "patch"),
+        permission_classes=(IsAuthenticated,),
+        detail=False
+    )
+    def me(self, request, *args, **kwargs):
+        self.get_object = self.get_instance
+        self.get_serializer_class = self.get_ch_us_d_serializer
+        if request.method == "GET":
+            return self.retrieve(request, *args, **kwargs)
+        elif request.method == "PATCH":
+            return self.partial_update(request, *args, **kwargs)
 
 
 class CustomTokenObtainPairView(TokenViewBase):

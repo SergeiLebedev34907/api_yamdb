@@ -35,12 +35,6 @@ class AdminUserManagementSerializer(serializers.ModelSerializer):
         validators = (NotMeValidator(),)
 
 
-class DestroyUserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = None
-
-
 class ChangingUserDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
