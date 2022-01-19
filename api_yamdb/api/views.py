@@ -53,7 +53,8 @@ def create_password(length=25):
     #     symbols = symbols.replace(ch, "")
     symbols = (
         "abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRST"
-        "UVWXYZ23456789!#$%&()*+,-./:;<=>?@[]^_{|}~")
+        "UVWXYZ23456789!#$%&()*+,-./:;<=>?@[]^_{|}~"
+    )
     password_list = random.choices(symbols, k=length)
     password = "".join(password_list)
     return password
@@ -68,7 +69,7 @@ class SignupAPIView(CreateAPIView):
         # get_or_create попытается создать объект в обход валидации
         instance = User.objects.filter(
             username=request.data.get("username"),
-            email=request.data.get("email")
+            email=request.data.get("email"),
         ).first()
         serializer = self.get_serializer(instance, data=request.data)
         serializer.is_valid(raise_exception=True)
