@@ -15,6 +15,18 @@ class User(AbstractUser):
     email = models.EmailField(max_length=254, unique=True)
     bio = models.CharField(max_length=400, blank=True, null=True)
     role = models.CharField(max_length=9, choices=USERS_ROLE, default="user")
+    
+    @property
+    def is_admin(self):
+        if self.role == "admin" or self.is_superuser:
+            return True
+        return False
+    
+    @property
+    def is_moderator(self):
+        if self.role == "moderator":
+            return True
+        return False
 
     class Meta:
         ordering = ["date_joined"]

@@ -47,15 +47,13 @@ User = get_user_model()
 
 
 def create_password(length=25):
+    # user friendly password
+    # symbols = string.ascii_letters + string.digits + string.punctuation
+    # for ch in "Il1O0\"`'\\":
+    #     symbols = symbols.replace(ch, "")
     symbols = (
-        "!", "#", "$", "%", "&", "(", ")", "*", "+", ",", "-", ".", "/", "2",
-        "3", "4", "5", "6", "7", "8", "9", ":", ";", "<", "=", ">", "?", "@",
-        "A", "B", "C", "D", "E", "F", "G", "H", "J", "K", "L", "M", "N", "P",
-        "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "[", "]", "^", "_",
-        "`", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "m", "n",
-        "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "{", "|",
-        "}", "~",
-    )
+        "abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRST"
+        "UVWXYZ23456789!#$%&()*+,-./:;<=>?@[]^_{|}~")
     password_list = random.choices(symbols, k=length)
     password = "".join(password_list)
     return password
@@ -67,12 +65,11 @@ class SignupAPIView(CreateAPIView):
     permission_classes = (AllowAny,)
 
     def create(self, request, *args, **kwargs):
-        try:
-            instance = User.objects.get(
-                username=request.data["username"], email=request.data["email"]
-            )
-        except Exception:
-            instance = None
+        # get_or_create попытается создать объект в обход валидации
+        instance = User.objects.filter(
+            username=request.data.get("username"),
+            email=request.data.get("email")
+        ).first()
         serializer = self.get_serializer(instance, data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
