@@ -47,10 +47,7 @@ User = get_user_model()
 
 
 def create_password(length=25):
-    # user friendly password
-    # symbols = string.ascii_letters + string.digits + string.punctuation
-    # for ch in "Il1O0\"`'\\":
-    #     symbols = symbols.replace(ch, "")
+    # user friendly password without "Il1O0\"`'\\"
     symbols = (
         "abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRST"
         "UVWXYZ23456789!#$%&()*+,-./:;<=>?@[]^_{|}~"
@@ -66,7 +63,6 @@ class SignupAPIView(CreateAPIView):
     permission_classes = (AllowAny,)
 
     def create(self, request, *args, **kwargs):
-        # get_or_create попытается создать объект в обход валидации
         instance = User.objects.filter(
             username=request.data.get("username"),
             email=request.data.get("email"),

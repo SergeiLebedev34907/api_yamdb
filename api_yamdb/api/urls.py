@@ -26,7 +26,6 @@ router_v1.register(
 
 urlpatterns = [
     path("v1/", include(router_v1.urls)),
-    # Первая часть
     path("v1/auth/signup/", views.SignupAPIView.as_view(), name="signup"),
     path(
         "v1/auth/token/",
