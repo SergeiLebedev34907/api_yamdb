@@ -32,7 +32,7 @@
 
 ## Примеры запросов
 
-Пример POST-запроса: регистрация нового пользователя.
+### Пример POST-запроса: регистрация нового пользователя.
 
 POST ...api/v1/auth/signup/
 ```sh
@@ -48,7 +48,8 @@ POST ...api/v1/auth/signup/
   "username": "string"
 }
 ```
-Пример POST-запроса: получение JWT-токена.
+
+### Пример POST-запроса: получение JWT-токена.
 
 POST ...api/v1/auth/token/
 ```sh
@@ -63,7 +64,8 @@ POST ...api/v1/auth/token/
   "token": "string"
 }
 ```
-Пример GET-запроса: получить список всех категорий.
+
+### Пример GET-запроса: получить список всех категорий.
 
 GET ...api/v1/categories/
 
@@ -83,7 +85,8 @@ GET ...api/v1/categories/
   }
 ]
 ```
-Пример POST-запроса: создать категорию.
+
+### Пример POST-запроса: создать категорию.
 
 POST ...api/v1/categories/
 ```sh
@@ -99,7 +102,8 @@ POST ...api/v1/categories/
   "slug": "string"
 }
 ```
-Пример GET-запроса: получить список всех жанров.
+
+### Пример GET-запроса: получить список всех жанров.
 
 GET ...api/v1/genres/
 
@@ -119,7 +123,8 @@ GET ...api/v1/genres/
   }
 ]
 ```
-Пример POST-запроса: создать жанр.
+
+### Пример POST-запроса: создать жанр.
 
 POST ...api/v1/genres/
 ```sh
@@ -128,7 +133,8 @@ POST ...api/v1/genres/
   "slug": "string"
 }
 ```
-Пример GET-запроса: получить список всех объектов.
+
+### Пример GET-запроса: получить список всех объектов.
 
 GET ...api/v1/titles/
 
@@ -161,7 +167,8 @@ GET ...api/v1/titles/
   }
 ]
 ```
-Пример POST-запроса: добавить новое произведение.
+
+### Пример POST-запроса: добавить новое произведение.
 
 POST ...api/v1/titles/
 ```sh
@@ -195,7 +202,8 @@ POST ...api/v1/titles/
   }
 }
 ```
-Пример GET-запроса: получить информацию о произведении.
+
+### Пример GET-запроса: получить информацию о произведении.
 
 GET ...api/v1/titles/{title_id}/
 
@@ -219,7 +227,8 @@ GET ...api/v1/titles/{title_id}/
   }
 }
 ```
-Пример PATCH-запроса: обновить информацию о произведении.
+
+### Пример PATCH-запроса: обновить информацию о произведении.
 
 PATCH ...api/v1/titles/{title_id}/
 ```sh
@@ -253,7 +262,8 @@ PATCH ...api/v1/titles/{title_id}/
   }
 }
 ```
-Пример GET-запроса: получить список всех отзывов.
+
+### Пример GET-запроса: получить список всех отзывов.
 
 GET ...api/v1/titles/{title_id}/reviews/
 
@@ -276,7 +286,8 @@ GET ...api/v1/titles/{title_id}/reviews/
   }
 ]
 ```
-Пример POST-запроса: добавить новый отзыв.
+
+### Пример POST-запроса: добавить новый отзыв.
 
 POST ...api/v1/titles/{title_id}/reviews/
 ```sh
@@ -295,7 +306,8 @@ POST ...api/v1/titles/{title_id}/reviews/
   "pub_date": "2019-08-24T14:15:22Z"
 }
 ```
-Пример GET-запроса: получить отзыв по id для указанного произведения.
+
+### Пример GET-запроса: получить отзыв по id для указанного произведения.
 
 GET ...api/v1/titles/{title_id}/reviews/{review_id}/
 
@@ -309,7 +321,8 @@ GET ...api/v1/titles/{title_id}/reviews/{review_id}/
   "pub_date": "2019-08-24T14:15:22Z"
 }
 ```
-Пример PATCH-запроса: частично обновить отзыв по id.
+
+### Пример PATCH-запроса: частично обновить отзыв по id.
 
 PATCH ...api/v1/titles/{title_id}/reviews/{review_id}/
 ```sh
@@ -328,7 +341,8 @@ PATCH ...api/v1/titles/{title_id}/reviews/{review_id}/
   "pub_date": "2019-08-24T14:15:22Z"
 }
 ```
-Пример GET-запроса: получить список всех комментариев к отзыву по id.
+
+### Пример GET-запроса: получить список всех комментариев к отзыву по id.
 
 GET ...api/v1/titles/{title_id}/reviews/{review_id}/comments/
 Пример ответа:
@@ -349,7 +363,8 @@ GET ...api/v1/titles/{title_id}/reviews/{review_id}/comments/
   }
 ]
 ```
-Пример POST-запроса: добавить новый комментарий для отзыва.
+
+### Пример POST-запроса: добавить новый комментарий для отзыва.
 
 POST ...api/v1/titles/{title_id}/reviews/{review_id}/comments/
 ```sh
@@ -366,7 +381,8 @@ POST ...api/v1/titles/{title_id}/reviews/{review_id}/comments/
   "pub_date": "2019-08-24T14:15:22Z"
 }
 ```
-Пример GET-запроса: получить комментарий для отзыва по id.
+
+### Пример GET-запроса: получить комментарий для отзыва по id.
 
 GET ...api/v1/titles/{title_id}/reviews/{review_id}/comments/{comment_id}/
 
@@ -379,7 +395,8 @@ GET ...api/v1/titles/{title_id}/reviews/{review_id}/comments/{comment_id}/
   "pub_date": "2019-08-24T14:15:22Z"
 }
 ```
-Пример PATCH-запроса: частично обновить комментарий к отзыву по id.
+
+### Пример PATCH-запроса: частично обновить комментарий к отзыву по id.
 
 PATCH ...api/v1/titles/{title_id}/reviews/{review_id}/comments/{comment_id}/
 ```sh
@@ -396,7 +413,8 @@ PATCH ...api/v1/titles/{title_id}/reviews/{review_id}/comments/{comment_id}/
   "pub_date": "2019-08-24T14:15:22Z"
 }
 ```
-Пример GET-запроса: получить список всех пользователей.
+
+### Пример GET-запроса: получить список всех пользователей.
 
 GET ...api/v1/users/
 
@@ -420,7 +438,8 @@ GET ...api/v1/users/
   }
 ]
 ```
-Пример POST-запроса: добавить нового пользователя.
+
+### Пример POST-запроса: добавить нового пользователя.
 
 POST ...api/v1/users/
 ```sh
@@ -444,7 +463,8 @@ POST ...api/v1/users/
   "role": "user"
 }
 ```
-Пример GET-запроса: получить пользователя по username.
+
+### Пример GET-запроса: получить пользователя по username.
 
 GET ...api/v1/users/{username}/
 
@@ -459,7 +479,8 @@ GET ...api/v1/users/{username}/
   "role": "user"
 }
 ```
-Пример PATCH-запроса: изменить данные пользователя по username.
+
+### Пример PATCH-запроса: изменить данные пользователя по username.
 
 PATCH ...api/v1/users/{username}/
 ```sh
